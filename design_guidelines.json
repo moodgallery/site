@@ -1,0 +1,142 @@
+{
+  "project_name": "Personal Operating System",
+  "design_philosophy": {
+    "identity": "The Anti-AI Designer (E1)",
+    "core_principles": [
+      "Fusion over Imitation: Mix Notion structure, Linear precision, and Apple Fitness visuals.",
+      "Emotion First: The app should feel like a 'Control Center' - disciplined, calm, and powerful.",
+      "Content is King: Data is the hero. Use density for information, but whitespace for focus.",
+      "Negative Space: Use 'Bento' grids to organize complex data without clutter."
+    ],
+    "anti_patterns": [
+      "No 'Inter' everywhere - mix with Monospace for data.",
+      "No generic center alignment - use grid alignment.",
+      "No 100% pure black backgrounds without texture or borders.",
+      "No default Shadcn shadows - use 1px borders and subtle glows."
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Inter, sans-serif",
+      "body": "Inter, sans-serif",
+      "data": "JetBrains Mono, Roboto Mono, monospace"
+    },
+    "rules": [
+      "Headings (h1-h3): Tracking tight (-0.02em), Weight 600/700.",
+      "Body: Tracking normal, Weight 400/500.",
+      "Data/Numbers: Monospace, Tracking -0.01em, Weight 500.",
+      "Uppercase Labels: Tracking wide (0.1em), Text-xs, Weight 600, Color Muted."
+    ],
+    "language_support": "Ukrainian (ensure fonts support Cyrillic characters)"
+  },
+  "colors": {
+    "theme": "dark",
+    "palette": {
+      "background": {
+        "default": "#09090b",
+        "paper": "#121212",
+        "subtle": "#18181b"
+      },
+      "text": {
+        "primary": "#fafafa",
+        "secondary": "#a1a1aa",
+        "muted": "#52525b"
+      },
+      "border": {
+        "default": "#27272a",
+        "active": "#3f3f46"
+      },
+      "accents": {
+        "primary": "#fafafa",
+        "finance_profit": "#10b981",
+        "finance_loss": "#f43f5e",
+        "goals": "#f59e0b",
+        "habits": "#8b5cf6",
+        "tasks": "#3b82f6",
+        "highlight": "#22c55e"
+      }
+    },
+    "gradients": {
+      "subtle_glow": "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%)",
+      "finance_card": "radial-gradient(circle at top right, rgba(16, 185, 129, 0.1), transparent 40%)",
+      "habit_card": "radial-gradient(circle at top right, rgba(139, 92, 246, 0.1), transparent 40%)"
+    }
+  },
+  "layout_system": {
+    "spacing": {
+      "container_padding": "p-4 md:p-8 lg:p-12",
+      "element_gap": "gap-4 md:gap-6"
+    },
+    "grid_strategy": {
+      "dashboard": "Bento Grid: grid-cols-1 md:grid-cols-4 lg:grid-cols-6 auto-rows-[180px]",
+      "bento_rules": [
+        "Hero/Summary: col-span-2 row-span-2",
+        "Standard Card: col-span-1 row-span-1",
+        "Tall List: col-span-1 row-span-2",
+        "Wide Chart: col-span-2 row-span-1"
+      ]
+    },
+    "containers": {
+      "card_style": "bg-card border border-border/40 rounded-xl hover:border-border/80 transition-colors duration-200",
+      "glass_header": "backdrop-blur-xl bg-background/70 border-b border-border/40 sticky top-0 z-50"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 rounded-md font-medium text-sm transition-all shadow-[0_0_10px_rgba(255,255,255,0.1)]",
+      "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 h-9 px-4 py-2 rounded-md font-medium text-sm",
+      "outline": "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-md text-sm",
+      "ghost": "hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-md text-sm"
+    },
+    "inputs": {
+      "default": "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+    },
+    "cards": {
+      "base": "rounded-xl border border-border bg-card text-card-foreground shadow-sm",
+      "hover_effect": "hover:shadow-[0_0_20px_-5px_rgba(255,255,255,0.1)] hover:border-primary/20"
+    },
+    "data_display": {
+      "progress_ring": "Use Recharts PieChart for 'Apple Fitness' style rings. Stroke width: 10px, background stroke opacity: 0.1",
+      "charts": "Minimalist lines, no grid lines, minimal axes. Tooltip: dark bg, white text."
+    }
+  },
+  "assets": {
+    "icons": {
+      "library": "lucide-react",
+      "style": "Stroke width 1.5px or 2px. Size 16px (small) to 24px (standard).",
+      "installation": "already installed"
+    },
+    "images": {
+      "login_background": "https://images.unsplash.com/photo-1762417108293-91614140073a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwzfHxtaW5pbWFsaXN0JTIwZGFyayUyMGFic3RyYWN0JTIwdGV4dHVyZXxlbnwwfHx8fDE3NzM1MzI4MTN8MA&ixlib=rb-4.1.0&q=85",
+      "profile_placeholder_texture": "https://images.unsplash.com/photo-1762417108285-3dcef5ae3dc7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHw0fHxtaW5pbWFsaXN0JTIwZGFyayUyMGFic3RyYWN0JTIwdGV4dHVyZXxlbnwwfHx8fDE3NzM1MzI4MTN8MA&ixlib=rb-4.1.0&q=85"
+    }
+  },
+  "motion": {
+    "default_transition": "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "page_transition": {
+      "initial": { "opacity": 0, "y": 10 },
+      "animate": { "opacity": 1, "y": 0 },
+      "exit": { "opacity": 0, "y": -10 }
+    },
+    "micro_interactions": "Active items should have a subtle 'press' effect (scale 0.98)."
+  },
+  "universal_guidelines": [
+    "Use 'sonner' for toasts.",
+    "Components MUST use named exports.",
+    "Pages MUST use default exports.",
+    "All interactive elements MUST include data-testid.",
+    "Do NOT use gradients for text.",
+    "Do NOT use 'transparent' background for dropdowns/modals - use solid dark colors with borders.",
+    "Ensure 3:1 contrast ratio for all text.",
+    "Interface language MUST be Ukrainian."
+  ],
+  "instructions_to_main_agent": [
+    "1. Setup Tailwind config with the provided color palette overrides for 'dark' mode.",
+    "2. Create the Layout Shell (Sidebar + Header + Main Content Area) using the 'containers' guidelines.",
+    "3. Implement the Dashboard using the Bento Grid strategy.",
+    "4. Build the Finance Tracker using 'Linear' style dense lists and simple charts.",
+    "5. Build the Habit Tracker using 'Apple Fitness' style rings (Recharts).",
+    "6. Ensure all hardcoded text is in Ukrainian.",
+    "7. Use the provided image URLs for the login page background."
+  ]
+}
