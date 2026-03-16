@@ -668,6 +668,7 @@ async def log_habit(habit_id: str, data: dict, user: User = Depends(get_current_
     }
     
     await db.habit_logs.insert_one(doc)
+    doc.pop("_id", None)
     
     # Update streak
     if completed:
