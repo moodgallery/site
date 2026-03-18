@@ -203,7 +203,7 @@ function AppRouter() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL || ''}>
       <AuthProvider>
         <AppRouter />
         <Toaster position="top-right" richColors />

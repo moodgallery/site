@@ -22,6 +22,19 @@
         Learn how to configure a non-root public URL by running `npm run build`.
         -->
         <title>Emergent | Fullstack App</title>
+        <!-- GitHub Pages SPA routing: restore path from 404 redirect -->
+        <script>
+          (function() {
+            var redirect = window.location.search.slice(1);
+            if (redirect.startsWith('p=/')) {
+              var decoded = redirect.replace(/^p=/, '').replace(/~and~/g, '&');
+              var query = '';
+              var qi = decoded.indexOf('&q=');
+              if (qi !== -1) { query = '?' + decoded.slice(qi + 3); decoded = decoded.slice(0, qi); }
+              window.history.replaceState(null, null, window.location.pathname.replace(/\/$/, '') + decoded + query + window.location.hash);
+            }
+          })();
+        </script>
         <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
         <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
     </head>
