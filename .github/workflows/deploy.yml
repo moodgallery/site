@@ -29,7 +29,7 @@ jobs:
       - name: Build
         working-directory: frontend
         env:
-          REACT_APP_BACKEND_URL: ${{ secrets.REACT_APP_BACKEND_URL }}
+          REACT_APP_BACKEND_URL: https://personal-os-cdwp.onrender.com
           CI: false
         run: yarn build
 
