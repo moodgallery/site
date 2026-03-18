@@ -20,6 +20,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 
 export const WeeklyReviewPage = () => {
   const [reviewData, setReviewData] = useState(null);
+  const [settings, setSettings] = useState({ currency_symbol: '$' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
@@ -31,19 +32,23 @@ export const WeeklyReviewPage = () => {
   const [whatToRemove, setWhatToRemove] = useState('');
 
   useEffect(() => {
-    fetchReview();
+    fetchData();
   }, []);
 
-  const fetchReview = async () => {
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/weekly-review');
-      setReviewData(response.data);
+      const [reviewRes, settingsRes] = await Promise.all([
+        api.get('/weekly-review'),
+        api.get('/settings'),
+      ]);
+      setReviewData(reviewRes.data);
+      setSettings(settingsRes.data);
       
-      if (response.data.reflection) {
-        setWhatWorked(response.data.reflection.what_worked || '');
-        setWhatEarned(response.data.reflection.what_earned || '');
-        setWhatToRemove(response.data.reflection.what_to_remove || '');
+      if (reviewRes.data.reflection) {
+        setWhatWorked(reviewRes.data.reflection.what_worked || '');
+        setWhatEarned(reviewRes.data.reflection.what_earned || '');
+        setWhatToRemove(reviewRes.data.reflection.what_to_remove || '');
       }
     } catch (error) {
       toast.error('Помилка завантаження');
@@ -96,6 +101,8 @@ export const WeeklyReviewPage = () => {
     return `${start.toLocaleDateString('uk-UA', options)} - ${end.toLocaleDateString('uk-UA', options)}`;
   };
 
+  const cs = settings?.currency_symbol || '$';
+
   // Chart data
   const habitsChartData = [
     { name: 'Виконано', value: reviewData?.habits_completion_rate || 0, color: 'hsl(var(--habits))' },
@@ -105,8 +112,8 @@ export const WeeklyReviewPage = () => {
   const summaryData = [
     { name: 'Завдання', value: reviewData?.tasks_completed || 0, icon: CheckSquare, color: 'hsl(var(--tasks))' },
     { name: 'Звички', value: `${reviewData?.habits_completion_rate || 0}%`, icon: Sparkles, color: 'hsl(var(--habits))' },
-    { name: 'Дохід', value: `$${reviewData?.total_income?.toLocaleString() || 0}`, icon: TrendingUp, color: 'hsl(var(--finance-profit))' },
-    { name: 'Витрати', value: `$${reviewData?.total_expense?.toLocaleString() || 0}`, icon: Wallet, color: 'hsl(var(--finance-loss))' },
+    { name: 'Дохід', value: `${cs}${reviewData?.total_income?.toLocaleString() || 0}`, icon: TrendingUp, color: 'hsl(var(--finance-profit))' },
+    { name: 'Витрати', value: `${cs}${reviewData?.total_expense?.toLocaleString() || 0}`, icon: Wallet, color: 'hsl(var(--finance-loss))' },
   ];
 
   return (
@@ -201,7 +208,7 @@ export const WeeklyReviewPage = () => {
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm text-muted-foreground">Дохід</span>
                   <span className="font-mono text-sm finance-positive">
-                    ${reviewData?.total_income?.toLocaleString() || 0}
+                    {cs}{reviewData?.total_income?.toLocaleString() || 0}
                   </span>
                 </div>
                 <Progress value={100} className="h-2 bg-[hsl(var(--finance-profit))]/20" />
@@ -210,7 +217,7 @@ export const WeeklyReviewPage = () => {
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm text-muted-foreground">Витрати</span>
                   <span className="font-mono text-sm finance-negative">
-                    ${reviewData?.total_expense?.toLocaleString() || 0}
+                    {cs}{reviewData?.total_expense?.toLocaleString() || 0}
                   </span>
                 </div>
                 <Progress 
@@ -222,7 +229,7 @@ export const WeeklyReviewPage = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Чистий результат</span>
                   <span className={`font-mono font-semibold ${(reviewData?.total_income - reviewData?.total_expense) >= 0 ? 'finance-positive' : 'finance-negative'}`}>
-                    ${((reviewData?.total_income || 0) - (reviewData?.total_expense || 0)).toLocaleString()}
+                    {cs}{((reviewData?.total_income || 0) - (reviewData?.total_expense || 0)).toLocaleString()}
                   </span>
                 </div>
               </div>

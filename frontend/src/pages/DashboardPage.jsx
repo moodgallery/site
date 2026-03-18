@@ -22,18 +22,23 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 export const DashboardPage = () => {
   const [data, setData] = useState(null);
+  const [settings, setSettings] = useState({ currency_symbol: '$' });
   const [loading, setLoading] = useState(true);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState(null);
 
   useEffect(() => {
-    fetchDashboard();
+    fetchData();
   }, []);
 
-  const fetchDashboard = async () => {
+  const fetchData = async () => {
     try {
-      const response = await api.get('/dashboard');
-      setData(response.data);
+      const [dashboardRes, settingsRes] = await Promise.all([
+        api.get('/dashboard'),
+        api.get('/settings'),
+      ]);
+      setData(dashboardRes.data);
+      setSettings(settingsRes.data);
     } catch (error) {
       toast.error('Помилка завантаження даних');
     } finally {
@@ -104,6 +109,7 @@ export const DashboardPage = () => {
   const habitsCompleted = data?.habits_today?.filter(h => h.completed_today).length || 0;
   const habitsTotal = data?.habits_today?.length || 0;
   const habitsPercentage = habitsTotal > 0 ? (habitsCompleted / habitsTotal) * 100 : 0;
+  const cs = settings?.currency_symbol || '$';
 
   const habitsPieData = [
     { name: 'Виконано', value: habitsCompleted, color: 'hsl(var(--habits))' },
@@ -133,16 +139,16 @@ export const DashboardPage = () => {
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <p className="label-uppercase mb-1">Дохід</p>
-                <p className="data-value finance-positive">${data?.finance?.income?.toLocaleString() || 0}</p>
+                <p className="data-value finance-positive">{cs}{data?.finance?.income?.toLocaleString() || 0}</p>
               </div>
               <div>
                 <p className="label-uppercase mb-1">Витрати</p>
-                <p className="data-value finance-negative">${data?.finance?.expense?.toLocaleString() || 0}</p>
+                <p className="data-value finance-negative">{cs}{data?.finance?.expense?.toLocaleString() || 0}</p>
               </div>
               <div>
                 <p className="label-uppercase mb-1">Баланс</p>
                 <p className={`data-value ${data?.finance?.balance >= 0 ? 'finance-positive' : 'finance-negative'}`}>
-                  ${data?.finance?.balance?.toLocaleString() || 0}
+                  {cs}{data?.finance?.balance?.toLocaleString() || 0}
                 </p>
               </div>
             </div>
@@ -154,7 +160,7 @@ export const DashboardPage = () => {
                   className="h-2"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  ${data.finance.income.toLocaleString()} / ${data.finance.goals[0].target_amount.toLocaleString()}
+                  {cs}{data.finance.income.toLocaleString()} / {cs}{data.finance.goals[0].target_amount.toLocaleString()}
                 </p>
               </div>
             )}
