@@ -954,8 +954,8 @@ async def save_weekly_reflection(data: WeeklyReflection, user: User = Depends(ge
 
 @api_router.post("/ai/analyze", response_model=AIAnalysisResponse)
 async def ai_analyze(data: AIAnalysisRequest, user: User = Depends(get_current_user)):
-    from emergentintegrations.llm.chat import LlmChat, UserMessage
-    
+    import anthropic
+
     # Gather user data for context
     tasks = await db.tasks.find({"user_id": user.user_id}, {"_id": 0}).to_list(100)
     habits = await db.habits.find({"user_id": user.user_id}, {"_id": 0}).to_list(100)
@@ -998,13 +998,14 @@ async def ai_analyze(data: AIAnalysisRequest, user: User = Depends(get_current_u
     prompt = prompts.get(data.analysis_type, prompts["productivity"])
     
     try:
-        chat = LlmChat(
-            api_key=os.environ.get("EMERGENT_LLM_KEY"),
-            session_id=f"ai_{user.user_id}_{uuid.uuid4().hex[:8]}",
-            system_message="Ти AI-асистент для продуктивності. Допомагаєш аналізувати дані користувача та даєш корисні поради. Відповідай українською мовою, коротко і по суті."
-        ).with_model("anthropic", "claude-sonnet-4-5-20250929")
-        
-        response = await chat.send_message(UserMessage(text=prompt))
+        client = anthropic.AsyncAnthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+        message = await client.messages.create(
+            model="claude-sonnet-4-5-20250929",
+            max_tokens=1024,
+            system="Ти AI-асистент для продуктивності. Допомагаєш аналізувати дані користувача та даєш корисні поради. Відповідай українською мовою, коротко і по суті.",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        response = message.content[0].text
         
         # Parse response for suggestions
         lines = response.split('\n')
