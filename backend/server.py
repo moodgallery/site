@@ -1269,13 +1269,22 @@ async def root():
 # Include router
 app.include_router(api_router)
 
+origins = os.environ.get("CORS_ORIGINS", "https://moodgallery.github.io").split(",")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+from fastapi.responses import JSONResponse
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    return JSONResponse(status_code=500, content={"detail": str(exc)})
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
