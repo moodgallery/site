@@ -97,8 +97,12 @@ export const HabitsPage = () => {
     }
   };
 
+  const formatDateLocal = (d) => {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+
   const handleToggleDay = async (habitId, date) => {
-    const dateStr = date.toISOString().slice(0, 10);
+    const dateStr = formatDateLocal(date);
     const logs = habitLogs[habitId] || [];
     const existingLog = logs.find(l => l.date === dateStr);
     const newCompleted = !existingLog?.completed;
@@ -138,7 +142,7 @@ export const HabitsPage = () => {
   };
 
   const isDateCompleted = (habitId, date) => {
-    const dateStr = date.toISOString().slice(0, 10);
+    const dateStr = formatDateLocal(date);
     const logs = habitLogs[habitId] || [];
     return logs.some(l => l.date === dateStr && l.completed);
   };
