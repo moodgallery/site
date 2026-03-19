@@ -8,3 +8,5 @@ bcrypt
 httpx
 anthropic>=0.49.0
 python-multipart
+certifi
+pymongo[srv]
