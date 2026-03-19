@@ -354,26 +354,36 @@ GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
 
 @api_router.post("/auth/google")
 async def google_auth(request: Request):
-    """Direct Google OAuth - verify Google ID token and create/login user"""
+    """Direct Google OAuth - verify Google token and create/login user.
+    Supports both ID token (credential) and access token flows."""
     body = await request.json()
     credential = body.get("credential")
+    access_token = body.get("access_token")
 
-    if not credential:
-        raise HTTPException(status_code=400, detail="Google credential required")
+    if not credential and not access_token:
+        raise HTTPException(status_code=400, detail="Google credential or access_token required")
 
-    # Verify the Google ID token
     async with httpx.AsyncClient() as http_client:
-        resp = await http_client.get(
-            f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}"
-        )
-        if resp.status_code != 200:
-            raise HTTPException(status_code=401, detail="Invalid Google token")
-
-        google_data = resp.json()
-
-    # Verify audience matches our client ID
-    if GOOGLE_CLIENT_ID and google_data.get("aud") != GOOGLE_CLIENT_ID:
-        raise HTTPException(status_code=401, detail="Token audience mismatch")
+        if access_token:
+            # Access token flow: get user info from Google userinfo API
+            resp = await http_client.get(
+                "https://www.googleapis.com/oauth2/v3/userinfo",
+                headers={"Authorization": f"Bearer {access_token}"}
+            )
+            if resp.status_code != 200:
+                raise HTTPException(status_code=401, detail="Invalid Google access token")
+            google_data = resp.json()
+        else:
+            # ID token flow: verify via tokeninfo
+            resp = await http_client.get(
+                f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}"
+            )
+            if resp.status_code != 200:
+                raise HTTPException(status_code=401, detail="Invalid Google token")
+            google_data = resp.json()
+            # Verify audience matches our client ID
+            if GOOGLE_CLIENT_ID and google_data.get("aud") != GOOGLE_CLIENT_ID:
+                raise HTTPException(status_code=401, detail="Token audience mismatch")
 
     email = google_data.get("email")
     name = google_data.get("name", email.split("@")[0])
