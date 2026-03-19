@@ -415,7 +415,10 @@ async def google_session(request: Request, response: Response):
         max_age=7*24*60*60
     )
     
+    token = create_token(user_id)
+
     return {
+        "token": token,
         "user_id": user_id,
         "email": google_data["email"],
         "name": google_data["name"],

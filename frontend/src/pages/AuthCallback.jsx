@@ -26,10 +26,11 @@ export const AuthCallback = () => {
 
       try {
         const response = await api.post('/auth/google/session', { session_id: sessionId });
-        loginWithGoogle(response.data);
+        const { token, ...userData } = response.data;
+        loginWithGoogle(userData, token);
         // Clear the hash and navigate
         window.history.replaceState(null, '', window.location.pathname);
-        navigate('/dashboard', { replace: true, state: { user: response.data } });
+        navigate('/dashboard', { replace: true });
       } catch (error) {
         console.error('Auth callback error:', error);
         navigate('/login', { replace: true });
