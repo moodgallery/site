@@ -12,13 +12,14 @@ from datetime import datetime, timezone, timedelta
 import jwt
 import bcrypt
 import httpx
+import certifi
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
+client = AsyncIOMotorClient(mongo_url, tlsCAFile=certifi.where())
 db = client[os.environ['DB_NAME']]
 
 JWT_SECRET = os.environ.get('JWT_SECRET', 'personal_os_secret')
@@ -1269,7 +1270,19 @@ async def root():
 # Include router
 app.include_router(api_router)
 
-origins = os.environ.get("CORS_ORIGINS", "https://moodgallery.github.io").split(",")
+cors_env = os.environ.get("CORS_ORIGINS", "https://moodgallery.github.io")
+# When allow_credentials=True, allow_origins cannot be ["*"] — browsers reject
+# Access-Control-Allow-Origin: * with credentials. Always use explicit origins.
+origins = [o.strip() for o in cors_env.split(",") if o.strip() and o.strip() != "*"]
+# Ensure the common origins are always included
+default_origins = [
+    "https://moodgallery.github.io",
+    "https://personal-os-cdwp.onrender.com",
+    "http://localhost:3000",
+]
+for o in default_origins:
+    if o not in origins:
+        origins.append(o)
 
 app.add_middleware(
     CORSMiddleware,
