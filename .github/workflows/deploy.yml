@@ -30,6 +30,7 @@ jobs:
         working-directory: frontend
         env:
           REACT_APP_BACKEND_URL: https://personal-os-cdwp.onrender.com
+          REACT_APP_GOOGLE_CLIENT_ID: ${{ vars.REACT_APP_GOOGLE_CLIENT_ID }}
           CI: false
         run: yarn build
 
