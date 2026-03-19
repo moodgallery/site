@@ -350,6 +350,68 @@ async def login(data: UserLogin):
     
     return TokenResponse(token=token, user=user)
 
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+
+@api_router.post("/auth/google")
+async def google_auth(request: Request):
+    """Direct Google OAuth - verify Google ID token and create/login user"""
+    body = await request.json()
+    credential = body.get("credential")
+
+    if not credential:
+        raise HTTPException(status_code=400, detail="Google credential required")
+
+    # Verify the Google ID token
+    async with httpx.AsyncClient() as http_client:
+        resp = await http_client.get(
+            f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}"
+        )
+        if resp.status_code != 200:
+            raise HTTPException(status_code=401, detail="Invalid Google token")
+
+        google_data = resp.json()
+
+    # Verify audience matches our client ID
+    if GOOGLE_CLIENT_ID and google_data.get("aud") != GOOGLE_CLIENT_ID:
+        raise HTTPException(status_code=401, detail="Token audience mismatch")
+
+    email = google_data.get("email")
+    name = google_data.get("name", email.split("@")[0])
+    picture = google_data.get("picture")
+
+    if not email:
+        raise HTTPException(status_code=401, detail="No email in Google token")
+
+    # Check if user exists
+    user_doc = await db.users.find_one({"email": email}, {"_id": 0})
+
+    if user_doc:
+        user_id = user_doc["user_id"]
+        await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {"name": name, "picture": picture}}
+        )
+    else:
+        user_id = f"user_{uuid.uuid4().hex[:12]}"
+        user_doc = {
+            "user_id": user_id,
+            "email": email,
+            "name": name,
+            "picture": picture,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.users.insert_one(user_doc)
+
+    token = create_token(user_id)
+
+    return {
+        "token": token,
+        "user_id": user_id,
+        "email": email,
+        "name": name,
+        "picture": picture
+    }
+
 @api_router.post("/auth/google/session")
 async def google_session(request: Request, response: Response):
     body = await request.json()
