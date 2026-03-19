@@ -10,7 +10,7 @@ import { Mail, Lock, User, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const LoginPage = () => {
-  const { login, register, user } = useAuth();
+  const { login, register, loginWithGoogle, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
