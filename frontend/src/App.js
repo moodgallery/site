@@ -49,9 +49,15 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      const url = error.config?.url || '';
+      // Don't redirect on auth endpoints (login/register/google) — let the caller handle it
+      const isAuthEndpoint = url.includes('/auth/login') || url.includes('/auth/register') || url.includes('/auth/google');
+      if (!isAuthEndpoint) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        const base = process.env.PUBLIC_URL || '';
+        window.location.href = base + '/login';
+      }
     }
     return Promise.reject(error);
   }
