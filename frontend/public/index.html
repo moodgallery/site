@@ -37,6 +37,15 @@
         </script>
         <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
         <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <!-- Keep backend warm: ping every 10 minutes to avoid cold starts -->
+        <script>
+          (function() {
+            var BACKEND = 'https://personal-os-cdwp.onrender.com/api/health';
+            function ping() { fetch(BACKEND, {method:'GET'}).catch(function(){}); }
+            ping();
+            setInterval(ping, 10 * 60 * 1000);
+          })();
+        </script>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>

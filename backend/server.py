@@ -242,7 +242,7 @@ def verify_password(password: str, hashed: str) -> bool:
 def create_token(user_id: str) -> str:
     payload = {
         "user_id": user_id,
-        "exp": datetime.now(timezone.utc) + timedelta(days=7)
+        "exp": datetime.now(timezone.utc) + timedelta(days=30)
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
@@ -1346,6 +1346,10 @@ async def delete_category(cat_id: str, user: User = Depends(get_current_user)):
 @api_router.get("/")
 async def root():
     return {"message": "Personal Operating System API"}
+
+@api_router.get("/health")
+async def health():
+    return {"status": "ok"}
 
 # Include router
 app.include_router(api_router)
