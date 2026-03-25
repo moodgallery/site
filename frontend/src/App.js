@@ -90,9 +90,17 @@ const AuthProvider = ({ children }) => {
       setUser(response.data);
       localStorage.setItem('user', JSON.stringify(response.data));
     } catch (error) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      setUser(null);
+      // Only log out on explicit auth errors (401), not on network/timeout errors
+      // This prevents logout when backend is waking up (cold start on Render)
+      if (error.response && error.response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setUser(null);
+      } else {
+        // Network error or server error - keep user logged in using cached data
+        const saved = localStorage.getItem('user');
+        if (saved) setUser(JSON.parse(saved));
+      }
     } finally {
       setLoading(false);
     }
